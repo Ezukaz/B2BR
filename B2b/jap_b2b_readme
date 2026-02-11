@@ -1,0 +1,318 @@
+## Description
+
+Born2BeRoot は、自分専用の仮想マシンを作成し、基本的なセキュリティ機能を備えたシンプルなサーバーを構築するプロジェクトです。
+少なくとも 2 つの暗号化パーティションを LVM を使って作成しなければなりません。
+OS として Debian か Rocky を選択できます。
+ファイアウォール、SSH、強力なパスワードポリシー、sudo、そして 10 分ごとにすべてのターミナルに指定された情報を表示するスクリプトファイルを追加する必要があります。
+
+## Instructions
+
+VirtualBox を開き、katakaha の VM の「Start」を押します。
+起動したら、パスワード「12345678aA」でディスクのロックを解除します。
+ディスクのロック解除後は、ローカルホスト側のターミナルから「ssh」で VM のターミナルへアクセスできます。
+次のコマンドを実行します:
+`ssh katakaha@localhost -p 4242`
+パスワードの入力を求められたら「1qwertyuiopZ」を入力します。
+katakaha@localhost の部分を他のユーザー名に変えることで、別のユーザーとしてアクセスできます。
+ユーザーの切り替えには `su` コマンドを使用します。
+
+シグネチャは `shasum "katakaha_s VM.vdi"` で確認できます。
+ファイルの場所は `/sgoinfre/b2br - vm/katakaha_s VM/` です。
+`cat ~/[path]/signature.txt` の出力と比較してください。
+
+以下に、レビューで必要な項目を確認するための便利なコマンドをまとめています。
+<table>
+    <thead>
+        <tr>
+            <th>カテゴリ</th>
+            <th>コマンド</th>
+            <th>内容 / 目的</th>
+        </tr>
+    </thead>
+    <tbody>
+		<!-- システムと認証 -->
+		<tr>
+    		<td>システム</td>
+    		<td><code>uname -a</code></td>
+    		<td>カーネル名とバージョン</td>
+    		<td></td>
+		</tr>
+		<tr>
+    		<td></td>
+    		<td><code>hostnamectl</code></td>
+    		<td>ホスト名とOS情報</td>
+    		<td>✅</td>
+		</tr>
+		<tr>
+    		<td></td>
+    		<td><code>sudo hostnamectl set-hostname [新しい名前]</code> または <code>sudo visudo</code> で /etc/hostname を開く</td>
+    		<td>ホスト名を変更（IPホスト名も忘れずに変更）</td>
+    		<td>✅</td>
+		</tr>
+		<tr>
+    		<td></td>
+    		<td><code>sudo nano /etc/hosts</code> でIP名を新しい名前に変更</td>
+    		<td>IPホスト名を変更</td>
+    		<td>✅</td>
+		</tr>
+  		<!-- ユーザ＆グループ -->
+    	<tr>
+        	<td>ユーザ/グループ</td>
+        	<td><code>sudo adduser [user]</code></td>
+        	<td>ユーザー作成</td>
+        	<td>✅</td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo deluser [user]</code></td>
+        	<td>ユーザー削除</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo addgroup [group]</code></td>
+        	<td>グループ作成</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo delgroup [group]</code></td>
+        	<td>グループ削除</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo usermod -aG [group] [user]</code></td>
+        	<td>ユーザをグループに追加</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>groups [user]</code></td>
+        	<td>ユーザのグループを表示</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo passwd [user]</code></td>
+        	<td>ユーザのパスワードを変更</td>
+        	<td></td>
+    	</tr>
+    	<!-- パッケージ、サービス、ファイアウォール -->
+    	<tr>
+        	<td>パッケージ/サービス/ファイアウォール</td>
+        	<td><code>dpkg -l | grep [pkg]</code></td>
+        	<td>パッケージがインストールされているか確認</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>systemctl status [service]</code></td>
+        	<td>サービス状態を確認</td>
+        	<td>✅</td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo systemctl is-enabled [service]</code></td>
+        	<td>起動時に有効か確認</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo systemctl [start,stop,restart] [service]</code></td>
+        	<td>サービス管理</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo ufw status verbose</code></td>
+        	<td>ファイアウォールルール表示</td>
+        	<td>✅</td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo ufw allow [port]</code></td>
+        	<td>ポート[番号]を許可</td>
+        	<td></td>
+    	</tr>
+    	<!-- SSH＆ネットワーク -->
+    	<tr>
+        	<td>SSH/ネットワーク</td>
+        	<td><code>ss -tnlp | grep ssh</code> または <code>ss -tuln</code></td>
+        	<td>待ち受けポート確認</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo systemctl status ssh</code></td>
+        	<td>SSH確認</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>ip a</code></td>
+        	<td>IPアドレス表示</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>hostname -I</code></td>
+        	<td>IPアドレス（短縮版）</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>ssh [username]@[IP] -p [port番号]</code></td>
+        	<td>SSH接続</td>
+        	<td></td>
+    	</tr>
+    	<!-- ディスク、LVM、パーティション -->
+    	<tr>
+        	<td>LVM/ディスク/パーティション</td>
+        	<td><code>lsblk</code></td>
+        	<td>ブロックデバイスとマウントポイント表示</td>
+        	<td>✅</td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>df -h</code></td>
+        	<td>ファイルシステムごとのディスク使用量</td>
+        	<td></td>
+    	</tr>
+    	<!-- ログ＆sudo設定 -->
+    	<tr>
+        	<td>Sudo/ログ</td>
+        	<td><code>sudo visudo</code></td>
+        	<td>sudoersを安全に編集</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo cat /etc/sudoers</code></td>
+        	<td>sudoers表示</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo cat /etc/sudoers.d/[file]</code></td>
+        	<td>カスタムsudo設定表示</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>journalctl -xe</code></td>
+        	<td>最近のシステムログ</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo tail -n 50 /var/log/auth.log</code></td>
+        	<td>認証/sudoログ</td>
+        	<td></td>
+    	</tr>
+    	<!-- Cron＆監視スクリプト -->
+    	<tr>
+        	<td>Cron/monitoring.sh</td>
+        	<td><code>crontab -l</code></td>
+        	<td>現在のユーザcrontab表示</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>sudo crontab -l</code></td>
+        	<td>root crontab表示</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>systemctl list-timers</code></td>
+        	<td>タイマ一覧</td>
+        	<td></td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>bash monitoring.sh</code></td>
+        	<td>スクリプトを手動実行</td>
+        	<td></td>
+    	</tr>
+    	<!-- ポリシー -->
+    	<tr>
+        	<td>ポリシー</td>
+        	<td><code>sudo nano /etc/pam.d/common-password</code></td>
+        	<td>パスワード設定用のパスワードポリシー確認</td>
+        	<td>✅</td>
+    	</tr>
+    	<tr>
+        	<td></td>
+        	<td><code>chage -l [user]</code></td>
+        	<td>ユーザのパスワードポリシー表示</td>
+        	<td>✅</td>
+    	</tr>
+	</tbody>
+</table>
+
+## Resources
+
+このプロジェクトの進め方の全体像は、次のサイトを参考にしました。
+セットアップ手順の最初のステップを理解するのに役立ちました。
+[Baigalmaa Baatar](https://baigal.medium.com/born2beroot-e6e26dfb50ac)<br>
+
+レビュー対策には、次のサイトを参考にしました。
+各項目について、防御的な観点から解説されています。
+[jizo](https://note.com/jizo_ts/n/nc3c228912a7b)
+
+#### 他に参考にしたリソース
+
+- [Sudoers Manual](https://www.sudo.ws/docs/man/1.9.13/sudoers.man/)
+
+- [OpenSSH Manual](https://www.openssh.org/manual.html)
+
+- [Debian Documentation](https://www.debian.org/doc/manuals/debian-reference/index.en.html)
+
+#### AI を使って理解を深めたこと
+
+- このプロジェクトが教えてくれること
+
+- 各要素が何をしているのか
+
+- 情報をどこで調べればよいか
+
+## プロジェクト概要
+
+このプロジェクトは、コマンドラインのみを使用してゼロから仮想マシンを作ることです。SSHアクセス、AppArmor、UFW、厳格なsudoルール、パスワードポリシーのセキュリティを設定しました。また、監視スクリプトを作成し、cronで定期的にシステム状態を報告するようにしました。
+
+#### OS
+
+RockyよりDebianを選びました。Rockyはエンタープライズ向けでRHELのポリシーに焦点を当てています。Debianは安定性が高く、コミュニティベースで、多くのパッケージリソースがありインストールが簡単です。Debianは多くの有名なLinuxディストリビューションのベースなので、トラブルシューティング情報も豊富です。
+
+	Rocky: サーバー向けでエンタープライズクラスの長期サポートがあります。標準セキュリティポリシーがDebianより堅牢で、ミッションクリティカルな環境に最適です。CentOSの後継なので移行がスムーズです。RHEL環境に慣れている人におすすめです。
+		まとめ: ベアメタルハイパーバイザにはRockyを選びます。
+
+	Debian: DFSG（Debian Free Software Guidelines）に準拠したソフトウェアを優先するオープンソースOSです。安定性とセキュリティに焦点を当てて、予測可能で信頼性があります。新しいバグのあるバージョンに頻繁に更新するのではなく、古くて信頼できるソフトウェアにセキュリティパッチを追加し、攻撃対象を最小化します。厳格でゆっくり確実なテストプロセスを経るため、非常に耐久性があり安定しています。
+		まとめ: ホストOS仮想マシンにはDebianを選びます。
+
+#### セキュリティシステム
+
+DebianはセキュリティにAppArmorを使用しており、私の仮想マシンでも有効にしています。MACの強制アクセス制御は「明示的に許可されたフォルダ以外は絶対にアクセスできない」ルールを実行します。AppArmorとSELinuxはこれらの制限の設定方法が異なります。
+
+	AppArmor: パスベース。アプリケーションを個別に制限することに特化しています。比較的管理が簡単です。セキュリティは高いですが、ファイル名が変わると制限が効かなくなります。
+
+	SELinux: ラベルベース。ファイルにタイプを与えて管理します。技術者向けでポリシーが複雑です。ファイル追跡機能があり非常に高いセキュリティを提供します。
+
+#### ファイアウォール
+
+DebianはUFW（Uncomplicated Firewall）を使用します。ファイアウォールは外部からのアクセスを制限します。
+
+	UFW: 複雑なiptables構文と同等のシンプルで読みやすいコマンドです。言い換えると、UFWがプリセットルールに変換するショートカットコマンドです。個別のポートを制御します。
+
+	Firewalld: 動的ゾーンベース。ネットワークゾーンごとに信頼レベルを調整します。ネットワークコンテキストを理解するスマートなファイアウォールです。エンタープライズに最適です。
+
+UFWがドアロックなら、Firewalldはスマートセキュリティシステムです。
+
+#### 仮想マシン
+
+システム管理の学習に最適でクロスプラットフォームのVirtualBoxを選びました。実際のハードウェアをシミュレートしながらゼロリスクです。テストラボとして使えます。クロスプラットフォームなので複数のOSを実行して異なる環境でテストできます。
+
+	VirtualBox: 高い汎用性。クロスプラットフォームなので異なる環境でも問題ありません。何でもできるオールラウンドツールです。
+
+	UTM: 特化最適化。Apple Silicon専用ですが爆速です。シンプルなMacネイティブUIでオーバーヘッドが低いです。汎用性が劣る分、シンプルさと速度で補います。

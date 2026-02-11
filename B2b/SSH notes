@@ -1,0 +1,5 @@
+Why root access is not permitted
+	By disabling root, we significantly shrink the attack surface from brute force attackers. Root is a known username, and therefore gets repeatedly attacked. Once compromised, the attacker has full control.
+	It is best practice to login with unprivileged accounts, then sudo for admin tasks. This limits the blast radius of potential credential leaks.
+	You can check root login permit by `sudo sshd -T | grep permitrootlogin`. This gets effective configuration parsed from `/etc/ssh/sshd_config` without launching or testing server instance. Unlike -t which only checks syntax, -T reveals runtime values safely, with no restart needed.
+	The default listening port for ssh is 22. You can try connecting via `ssh username@hostname -p [portnumber]`. You can add a port to listen to by editing /etc/ssh/sshd_config with sudo nano or any other editor of your choice.

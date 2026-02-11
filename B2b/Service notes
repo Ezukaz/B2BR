@@ -1,0 +1,6 @@
+How to check service status
+	`systemctl status [service]`
+	To make changes, use `sudo`
+	Enable - Disable are for turning the resident processes on or off. They won't startup. Stop - Start are for turning the process on or off. This is for the changing the current situation.
+
+I don't know if this is related, but the `which` cmd is useful for finding the path to a cmd. You can look for all commands by compgen -c. Use grep with this to filter out a specific cmd.

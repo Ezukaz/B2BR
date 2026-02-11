@@ -1,0 +1,7 @@
+How to open ports
+	`sudo ufw allow [port]`
+	`sudo ufw delete allow [port]` to delete
+	
+How to check allowed ports
+	`sudo ufw status`
+	This does not mean that ssh is listening. Ufw is just allowing that port to be accessed. If you want to access the port via ssh, you must add the port in the config file of ssh.
